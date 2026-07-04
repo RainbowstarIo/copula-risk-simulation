@@ -32,21 +32,21 @@ plots, which help illustrate different dependenc structures.
 
 The mathematical foundation of this project is Sklar's theorem. It
 states that a multivariate distribution can be decomposed into its
-marginal distribution and a copula.
+marginal distributions and a copula.
 
 For a random vector
 
 $$
-X = (X_1,\dots, X_d),
+X = (X_1, \dots, X_d),
 $$
 
 let
 
 $$
-F_i(x_i) = P(X_i\leq x_i),\quad i = 1,\dots,d,
+F_i(x_i) = P(X_i \leq x_i), \quad i = 1,\dots,d,
 $$
 
-be the marignal distribution function of the (i)-th component. Then
+be the marginal distribution function of the \(i\)-th component. Then
 the joint distribution function can be written as
 
 $$
@@ -55,20 +55,20 @@ F(x_1, \dots, x_d)
 C(F_1(x_1), \dots, F_d(x_d)).
 $$
 
-Here, the marginal distributions (F_i) describe the behavior of the
-individual components, while the copula (C) describes the dependence structure
+Here, the marginal distributions \(F_i\) describe the behavior of the
+individual components, while the copula \(C\) describes the dependence structure
 between them.
 
 In the simulation, the project first generates samples from a copula,
 
 $$
-U = (U_1,\dots, U_d)\sim C,
+U = (U_1, \dots, U_d) \sim C,
 $$
 
 where each component satisfies
 
 $$
-U_i\sim U(0, 1).
+U_i \sim U(0, 1).
 $$
 
 These copula samples are then transformed into samples with the
@@ -79,11 +79,10 @@ $$
 X_i = F_i^{-1}(U_i).
 $$
 
-Thies construction makes it possible to combine different
+This construction makes it possible to combine different
 dependence structures with different marginal distributions. For
-example, the same Gaussian copula can be combined wiht normal,
-Student - t, exponential, or uniform marginals.
-
+example, the same Gaussian copula can be combined with normal,
+Student-t, exponential, or uniform marginals.
 
 
 ## 3. Features
