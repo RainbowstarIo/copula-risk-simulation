@@ -50,7 +50,9 @@ be the marignal distribution function of the (i)-th component. Then
 the joint distribution function can be written as
 
 $$
-C(F_(x_1),\dots,F_d(x_d)).
+F(x_1, \dots, x_d)
+=
+C(F_1(x_1), \dots, F_d(x_d)).
 $$
 
 Here, the marginal distributions (F_i) describe the behavior of the
