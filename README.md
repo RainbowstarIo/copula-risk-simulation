@@ -387,7 +387,7 @@ dependence and different forms of tail dependence.
 
 The project can be extended with financial and insurance risk measures, including:
 
-- Value at Rist,
+- Value at Risk,
 - Expected Shortfall,
 - portfolio loss simulation,
 - joint default probabilities,
@@ -395,7 +395,7 @@ The project can be extended with financial and insurance risk measures, includin
 - probability of simultaneous extreme losses.
 
 
-A portfolio loss could, for example, be definded by
+A portfolio loss could, for example, be defined by
 
 
 $$
@@ -403,12 +403,14 @@ L = w_1X_1 + \dots + w_dX_d,
 $$
 
 
-where \(w_i\) are portfolio weights and \(X_i\) are simulated risk factors or losses.
+where $w_i$ are portfolio weights and $X_i$ are simulated risk factors or losses.
 
-The Value at Rist at confidence level \(\alpha\) is then given by
+The Value at Risk at confidence level $\alpha$ is then given by
 
 $$
-\operatorname{VaR}_{\alpha}(L) = \inf \left\{ l \in \mathbb{R} : P(L \leq l) \geq \alpha \right\}.
+\mathrm{VaR}_{\alpha}(L) 
+=
+\inf \left\{ l \in \mathbb{R} : P(L \leq l) \geq \alpha \right\}
 $$
 
 The Expected Shortfall can be estimated from the simulated losses beyond the corresponding
@@ -463,9 +465,9 @@ linear correlation and the same marginal distributions.
 
 For example, the following settings may be used:
 
-- number of samples: (n=5000),
-- correlation parameter: (\rho=0.7),
-- t-copula degrees of freedom: (\nu=4),
+- number of samples: \(n=5000\),
+- correlation parameter: \(\rho=0.7\),
+- t-copula degrees of freedom: \(\nu=4\),
 - first marginal: standard normal distribution,
 - second marginal: standard normal distribution,
 - random seed: 42
