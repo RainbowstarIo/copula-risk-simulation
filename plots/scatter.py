@@ -20,7 +20,7 @@ def plot_2d_samples(
         )
     
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize = (5, 4))
 
     ax.scatter(
         samples[:, 0],
