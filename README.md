@@ -408,9 +408,7 @@ where $w_i$ are portfolio weights and $X_i$ are simulated risk factors or losses
 The Value at Risk at confidence level $\alpha$ is then given by
 
 $$
-\mathrm{VaR}_{\alpha}(L) 
-=
-\inf \left\{ l \in \mathbb{R} : P(L \leq l) \geq \alpha \right\}
+\mathrm{VaR}_{\alpha}(L) = \inf \left\{ l \in \mathbb{R} : P(L \leq l) \geq \alpha \right\}
 $$
 
 The Expected Shortfall can be estimated from the simulated losses beyond the corresponding
