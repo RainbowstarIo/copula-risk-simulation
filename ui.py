@@ -20,6 +20,7 @@ from simulation.transform import apply_marginals
 from plots.scatter import plot_2d_samples
 from plots.contour import plot_2d_function_contour
 from plots.surface import plot_2d_function_surface
+from plots.marginal import plot_2d_samples_with_marginals
 
 
 st.set_page_config(
@@ -39,7 +40,7 @@ st.write(
 )
 
 
-def build_copula(copula_name: str, rho: float, df: float):
+def build_copula(copula_name: str, rho: float | None = None, df: float | None = None):
     """
     Build copula sample function and CDF function.
 
@@ -58,24 +59,42 @@ def build_copula(copula_name: str, rho: float, df: float):
         Parameters for the CDF function.
     """
 
-    P = np.array([
-        [1.0, rho],
-        [rho, 1.0]
-    ])
-
+   
     if copula_name == "Gaussian":
+        if rho is None :
+            raise ValueError("rho is required for the Gaussian copula.")
+        
+        P = np.array([
+            [1.0, rho],
+            [rho, 1.0]
+        ])
         return (
             gaussian.sample,
             {"P": P},
             gaussian.cdf,
+            {"P": P},
+            gaussian.pdf,
             {"P": P}
         )
 
     if copula_name == "t":
+        if rho is None :
+            raise ValueError("rho is required for the t copula.")
+        
+        if df is None :
+            raise ValueError("df is required for the t copula.")
+        
+        P = np.array([
+            [1.0, rho],
+            [rho, 1.0]
+        ])
+
         return (
             t_copula.sample,
             {"P": P, "df": df},
             t_copula.cdf,
+            {"P": P, "df": df},
+            t_copula.pdf,
             {"P": P, "df": df}
         )
 
@@ -84,6 +103,8 @@ def build_copula(copula_name: str, rho: float, df: float):
             independence.sample,
             {"dim": 2},
             independence.cdf,
+            {},
+            independence.pdf,
             {}
         )
 
@@ -92,6 +113,8 @@ def build_copula(copula_name: str, rho: float, df: float):
             comonotonic.sample,
             {"dim": 2},
             comonotonic.cdf,
+            {},
+            None,
             {}
         )
 
@@ -100,6 +123,8 @@ def build_copula(copula_name: str, rho: float, df: float):
             countermonotonic.sample,
             {"dim": 2},
             countermonotonic.cdf,
+            {},
+            None,
             {}
         )
 
@@ -238,19 +263,24 @@ copula_name = st.sidebar.selectbox(
     ]
 )
 
-rho = st.sidebar.slider(
-    "Correlation rho",
-    min_value=-0.95,
-    max_value=0.95,
-    value=0.7,
-    step=0.05
-)
+rho = None
+df_copula = None
 
-df_copula = st.sidebar.number_input(
-    "Degrees of freedom for t copula",
-    min_value=0.0001,
-    value=4.0
-)
+if copula_name in ["Gaussian", "t"]:
+        rho = st.sidebar.slider(
+            "Correlation rho",
+            min_value = -0.95,
+            max_value = 0.95,
+            value = 0.7,
+            step = 0.05
+        )
+
+if copula_name == "t":
+    df_copula = st.sidebar.number_input(
+        "Degrees of freedom for t copula",
+        min_value = 0.0001,
+        value = 4.0
+    )
 
 st.sidebar.header("Marginal Distributions")
 
@@ -309,6 +339,11 @@ show_x_scatter = st.sidebar.checkbox(
     value=True
 )
 
+show_marginal_plot = st.sidebar.checkbox(
+    "Show marginal histograms",
+    value = True
+)
+
 show_contour = st.sidebar.checkbox(
     "Show copula CDF contour plot",
     value=True
@@ -316,6 +351,16 @@ show_contour = st.sidebar.checkbox(
 
 show_surface = st.sidebar.checkbox(
     "Show copula CDF surface plot",
+    value=True
+)
+
+show_pdf_contour = st.sidebar.checkbox(
+    "Show copula PDF contour plot",
+    value=True
+)
+
+show_pdf_surface = st.sidebar.checkbox(
+    "Show copula PDF surface plot",
     value=True
 )
 
@@ -348,11 +393,13 @@ if st.button("Generate Samples"):
             copula_sample_func,
             copula_sample_params,
             copula_cdf_func,
-            copula_cdf_params
+            copula_cdf_params,
+            copula_pdf_func,
+            copula_pdf_params
         ) = build_copula(
             copula_name=copula_name,
-            rho=float(rho),
-            df=float(df_copula)
+            rho=float(rho) if rho is not None else None,
+            df=float(df_copula) if df_copula is not None else None
         )
 
         st.write("Step 2: Generating copula samples U...")
@@ -449,6 +496,25 @@ if st.button("Generate Samples"):
             st.pyplot(fig_x)
             plt.close(fig_x)
 
+        if show_marginal_plot :
+            st.subheader("Joint Samples with Marginal Histograms")
+
+            fig_marginal, ax_marginal = plot_2d_samples_with_marginals(
+                X,
+                title = (
+                    f"{copula_name} copula with "
+                    f"{marginal_1} and {marginal_2} marginals"
+                ),
+                xlabel = "X1",
+                ylabel = "X2",
+                bins = 30,
+                alpha = 0.55,
+                s = 10
+            )
+
+            st.pyplot(fig_marginal)
+            plt.close(fig_marginal)
+
         # ======================================================
         # Contour Plot
         # ======================================================
@@ -488,6 +554,63 @@ if st.button("Generate Samples"):
 
             st.pyplot(fig_surface)
             plt.close(fig_surface)
+        
+        
+        # ======================================================
+        # PDF Contour Plot
+        # ======================================================
+        if show_pdf_contour:
+            st.subheader("Copula PDF Contour Plot")
+
+            if copula_pdf_func is None:
+                st.info(
+                    f"The {copula_name} copula is not absolutely continuous,"
+                    "so a usual two-dimensional copula density does not exist."
+                )
+
+            else :
+                fig_pdf_contour, ax_pdf_contour = plot_2d_function_contour(
+                    copula_pdf_func,
+                    title=f"{copula_name} Copula PDF Contour",
+                    xlabel="u",
+                    ylabel="v",
+                    grid_size=int(grid_size),
+                    levels=int(levels),
+                    **copula_pdf_params
+                )
+
+                st.pyplot(fig_pdf_contour)
+                plt.close(fig_pdf_contour)
+        
+        
+        # ======================================================
+        # PDF Surface Plot
+        # ======================================================
+
+        if show_pdf_surface:
+            st.subheader("Copula PDF Surface Plot")
+
+            if copula_pdf_func is None:
+                st.info(
+                    f"The {copula_name} copula is not absolutely continuous,"
+                    "so a usual two-dimensional copula density does not exist."
+                )
+            else:
+                fig_pdf_surface, ax_pdf_surface = plot_2d_function_surface(
+                    copula_pdf_func,
+                    title=f"{copula_name} Copula PDF Surface",
+                    xlabel="u",
+                    ylabel="v",
+                    zlabel="c(u,v)",
+                    grid_size=int(grid_size),
+                    **copula_pdf_params
+                )
+
+                st.pyplot(fig_pdf_surface)
+                plt.close(fig_pdf_surface)
+
+
+
 
         st.success("Done.")
 

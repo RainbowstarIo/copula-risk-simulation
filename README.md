@@ -115,8 +115,18 @@ The project currently provides the following features:
 - Visualization of simulated samples and dependence structures:
     - 2D scatter plots of copula samples in \(U\)-space
     - 2D scatter plots of transformed samples in \(X\)-space
+    - Joint scatter plots of transformed samples with marginal histograms
     - Contour plots of copula CDF functions
     - 3D surface plots of copula CDF functions
+    - Contour plots of copula PDF functions for absolutely
+      continuous copulas
+    - 3D surface plots of copula PDF functions for absolutely
+      continuous copulas
+
+
+PDF plots are available for Gaussian, t, and independence copulas. The comonotonic and 
+countermonotonic copulas are not absolutely continuous, so an ordinary two-dimensional copula
+density is not available for these models.
 
 
 - Interactive Streamlist user interface:
@@ -205,8 +215,10 @@ In the Streamlit interface, the user can :
 - set parameters such as correlation, degrees of freedom, sample size, and random seed,
 - generate copula samples,
 - transform them into joint samples,
-- visualize the results using scatter plots, contour plots, and surface plots.
-
+- display generated samples, summary statistics, and sample correlation matrices,
+- visualize copula samples and transformed samples using scatter plots,
+- visualize transformed samples together with their marginal histograms,
+- visualize copula CDF and PDF functions using contour plots and 3D surface plots.
 
 ### 5.2 Generating Joint Samples in Python
 
@@ -282,37 +294,36 @@ The project is organized into several modules:
 
 ```text
 copula-risk-simulation/
-│
-├── copulas/
+├── copulas/               # Copula models
 │   ├── independence.py
 │   ├── comonotonic.py
 │   ├── countermonotonic.py
 │   ├── gaussian.py
 │   └── t_copula.py
 │
-├── marginals/
+├── marginals/             # Marginal distributions
 │   ├── normal.py
 │   ├── student_t.py
 │   ├── exponential.py
 │   ├── uniform.py
 │   └── beta.py
 │
-├── simulation/
+├── simulation/            # Sampling and transformations
 │   ├── transform.py
 │   ├── joint_marginals.py
 │   └── statistics.py
 │
-├── plots/
+├── plots/                 # Visualization utilities
 │   ├── scatter.py
 │   ├── contour.py
-│   └── surface.py
+│   ├── surface.py
+│   └── marginal.py
 │
-├── images/  
+├── images/                # Screenshots and README figures
+├── tests/                 # Unit tests
 │
-├── tests/
-│
-├── main.py
-├── ui.py
+├── main.py                # Example script
+├── ui.py                  # Streamlit application
 └── README.md
 ```
 
