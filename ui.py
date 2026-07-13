@@ -21,6 +21,8 @@ from plots.scatter import plot_2d_samples
 from plots.contour import plot_2d_function_contour
 from plots.surface import plot_2d_function_surface
 from plots.marginal import plot_2d_samples_with_marginals
+from plots.ecdf import plot_empirical_and_theoretical_cdf
+from plots.epdf import plot_empirical_and_theoretical_pdf
 
 
 st.set_page_config(
@@ -154,6 +156,8 @@ def build_marginal_spec(marginal_name: str, prefix: str) -> dict:
 
         return {
             "ppf": normal.ppf,
+            "cdf": normal.cdf,
+            "pdf": normal.pdf,
             "params": {"mu": mu, "sigma": sigma}
         }
 
@@ -166,6 +170,8 @@ def build_marginal_spec(marginal_name: str, prefix: str) -> dict:
 
         return {
             "ppf": exponential.ppf,
+            "cdf": exponential.cdf,
+            "pdf": exponential.pdf,
             "params": {"lam": lam}
         }
 
@@ -189,6 +195,8 @@ def build_marginal_spec(marginal_name: str, prefix: str) -> dict:
 
         return {
             "ppf": student_t.ppf,
+            "cdf": student_t.cdf,
+            "pdf": student_t.pdf,
             "params": {"df": df, "loc": loc, "scale": scale}
         }
 
@@ -205,6 +213,8 @@ def build_marginal_spec(marginal_name: str, prefix: str) -> dict:
 
         return {
             "ppf": uniform.ppf,
+            "cdf": uniform.cdf,
+            "pdf": uniform.pdf,
             "params": {"a": a, "b": b}
         }
 
@@ -223,6 +233,8 @@ def build_marginal_spec(marginal_name: str, prefix: str) -> dict:
 
         return {
             "ppf": beta.ppf,
+            "cdf": beta.cdf,
+            "pdf": beta.pdf,
             "params": {"alpha": alpha, "beta_param": beta_param}
         }
 
@@ -341,6 +353,16 @@ show_x_scatter = st.sidebar.checkbox(
 
 show_marginal_plot = st.sidebar.checkbox(
     "Show marginal histograms",
+    value = True
+)
+
+show_empirical_cdf = st.sidebar.checkbox(
+    "Show empirical marginal CDF plots.",
+    value = True
+)
+
+show_empirical_pdf = st.sidebar.checkbox(
+    "Show empirical marginal PDF plots.",
     value = True
 )
 
@@ -511,9 +533,85 @@ if st.button("Generate Samples"):
                 alpha = 0.55,
                 s = 10
             )
-
+        
             st.pyplot(fig_marginal)
             plt.close(fig_marginal)
+
+        
+
+        # ======================================================
+        # Empirical Marginal CDF Plots
+        # ======================================================
+
+        if show_empirical_cdf:
+            st.subheader("Empirical and Theoretical Marginal CDFs")
+
+            col_cdf_1, col_cdf_2 = st.columns(2)
+
+            with col_cdf_1:
+                fig_cdf_1, ax_cdf_1 = plot_empirical_and_theoretical_cdf(
+                    samples=X[:, 0],
+                    theoretical_cdf=marginal_spec_1["cdf"],
+                    cdf_params=marginal_spec_1["params"],
+                    title=f"Empirical vs Theoretical CDF of X1 ({marginal_1})",
+                    xlabel="X1"
+                )
+
+                st.pyplot(fig_cdf_1)
+                plt.close(fig_cdf_1)
+
+            with col_cdf_2:
+                fig_cdf_2, ax_cdf_2 = plot_empirical_and_theoretical_cdf(
+                    samples=X[:, 1],
+                    theoretical_cdf=marginal_spec_2["cdf"],
+                    cdf_params=marginal_spec_2["params"],
+                    title=f"Empirical vs Theoretical CDF of X2 ({marginal_2})",
+                    xlabel="X2"
+                )
+
+                st.pyplot(fig_cdf_2)
+                plt.close(fig_cdf_2)
+
+        # ======================================================
+        # Empirical Marginal PDF Plots
+        # ======================================================
+
+        if show_empirical_pdf:
+            st.subheader("Empirical and Theoretical Marginal PDFs")
+
+            col_pdf_1, col_pdf_2 = st.columns(2)
+
+            with col_pdf_1:
+                fig_epdf_1, ax_epdf_1 = (
+                    plot_empirical_and_theoretical_pdf(
+                        samples=X[:, 0],
+                        theoretical_pdf=marginal_spec_1["pdf"],
+                        pdf_params=marginal_spec_1["params"],
+                        title=f"Empirical vs Theoretical PDF of X1 ({marginal_1})",
+                        xlabel="X1",
+                        bins=30
+                    )
+                )
+
+                st.pyplot(fig_epdf_1)
+                plt.close(fig_epdf_1)
+
+            with col_pdf_2:
+                fig_epdf_2, ax_epdf_2 = (
+                    plot_empirical_and_theoretical_pdf(
+                        samples=X[:, 1],
+                        theoretical_pdf=marginal_spec_2["pdf"],
+                        pdf_params=marginal_spec_2["params"],
+                        title=f"Empirical vs Theoretical PDF of X2 ({marginal_2})",
+                        xlabel="X2",
+                        bins=30
+                    )
+                )
+
+                st.pyplot(fig_epdf_2)
+                plt.close(fig_epdf_2)
+
+
 
         # ======================================================
         # Contour Plot

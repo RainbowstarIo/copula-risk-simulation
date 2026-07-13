@@ -122,6 +122,10 @@ The project currently provides the following features:
       continuous copulas
     - 3D surface plots of copula PDF functions for absolutely
       continuous copulas
+    - Empirical marginal CDF plots for generated samples
+    - Comparison of empirical and theoretical marginal CDFs
+    - Empirical marginal PDF plots for generated samples
+    - Comparison of histograms, empirical kernel density estimates, and theoretical marginal PDFs
 
 
 PDF plots are available for Gaussian, t, and independence copulas. The comonotonic and 
@@ -207,7 +211,7 @@ python -m streamlit run ui.py
 ```
 
 
-In the Streamlit interface, the user can :
+In the Streamlit interface, the user can:
 
 
 - select a copula model,
@@ -218,6 +222,7 @@ In the Streamlit interface, the user can :
 - display generated samples, summary statistics, and sample correlation matrices,
 - visualize copula samples and transformed samples using scatter plots,
 - visualize transformed samples together with their marginal histograms,
+- compare empirical and theoretical CDFs of the generated marginal samples,
 - visualize copula CDF and PDF functions using contour plots and 3D surface plots.
 
 ### 5.2 Generating Joint Samples in Python
@@ -293,6 +298,7 @@ The project is organized into several modules:
 
 
 ```text
+
 copula-risk-simulation/
 ├── copulas/               # Copula models
 │   ├── independence.py
@@ -317,7 +323,9 @@ copula-risk-simulation/
 │   ├── scatter.py
 │   ├── contour.py
 │   ├── surface.py
-│   └── marginal.py
+│   ├── marginal.py
+│   ├── ecdf.py
+│   └── epdf.py
 │
 ├── images/                # Screenshots and README figures
 ├── tests/                 # Unit tests
@@ -325,6 +333,8 @@ copula-risk-simulation/
 ├── main.py                # Example script
 ├── ui.py                  # Streamlit application
 └── README.md
+
+
 ```
 
 
