@@ -23,6 +23,7 @@ from plots.surface import plot_2d_function_surface
 from plots.marginal import plot_2d_samples_with_marginals
 from plots.ecdf import plot_empirical_and_theoretical_cdf
 from plots.epdf import plot_empirical_and_theoretical_pdf
+from plots.kde import plot_empirical_2d_density
 
 
 st.set_page_config(
@@ -356,6 +357,16 @@ show_marginal_plot = st.sidebar.checkbox(
     value = True
 )
 
+show_u_empirical_density = st.sidebar.checkbox(
+    "Show empirical 2D density of U",
+    value = True
+)
+
+show_x_empirical_density = st.sidebar.checkbox(
+    "Show empirical 2D density of X",
+    value = True
+)
+
 show_empirical_cdf = st.sidebar.checkbox(
     "Show empirical marginal CDF plots.",
     value = True
@@ -475,6 +486,9 @@ if st.button("Generate Samples"):
 
         st.subheader("Summary Statistics")
 
+        st.write("Summary statistics of copula samples U")
+        st.dataframe(df_u.describe())
+
         st.write("Summary statistics of transformed samples X")
         st.dataframe(df_x.describe())
 
@@ -536,6 +550,61 @@ if st.button("Generate Samples"):
         
             st.pyplot(fig_marginal)
             plt.close(fig_marginal)
+
+
+
+        # ======================================================
+        # Empirical 2D Density Plots
+        # ======================================================
+
+        if show_u_empirical_density:
+            st.subheader("Empirical 2D Density of Copula Samples U")
+
+            try:
+                fig_u_density, ax_u_density = plot_empirical_2d_density(
+                    U,
+                    title=f"Empirical 2D density of {copula_name} copula samples",
+                    xlabel="U1",
+                    ylabel="U2",
+                    grid_size=int(grid_size),
+                    levels=int(levels),
+                    show_points=True
+                )
+
+                st.pyplot(fig_u_density)
+                plt.close(fig_u_density)
+
+            except np.linalg.LinAlgError:
+                st.info(
+                    "Empirical 2D density is not available for this copula "
+                    "because the samples lie on a lower-dimensional line."
+                )
+
+        if show_x_empirical_density:
+            st.subheader("Empirical 2D Density of Transformed Samples X")
+
+            try:
+                fig_x_density, ax_x_density = plot_empirical_2d_density(
+                    X,
+                    title=(
+                        f"Empirical 2D density of {copula_name} copula with "
+                        f"{marginal_1} and {marginal_2} marginals"
+                    ),
+                    xlabel="X1",
+                    ylabel="X2",
+                    grid_size=int(grid_size),
+                    levels=int(levels),
+                    show_points=True
+                )
+
+                st.pyplot(fig_x_density)
+                plt.close(fig_x_density)
+
+            except np.linalg.LinAlgError:
+                st.info(
+                    "Empirical 2D density is not available for this sample "
+                    "because the data lie on a lower-dimensional line."
+                )
 
         
 

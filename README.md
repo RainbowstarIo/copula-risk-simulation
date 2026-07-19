@@ -115,6 +115,8 @@ The project currently provides the following features:
 - Visualization of simulated samples and dependence structures:
     - 2D scatter plots of copula samples in \(U\)-space
     - 2D scatter plots of transformed samples in \(X\)-space
+    - Empirical two-dimensional density contour plots of copula samples
+      and transformed samples using Gaussian kernel density estimation
     - Joint scatter plots of transformed samples with marginal histograms
     - Contour plots of copula CDF functions
     - 3D surface plots of copula CDF functions
@@ -133,19 +135,22 @@ countermonotonic copulas are not absolutely continuous, so an ordinary two-dimen
 density is not available for these models.
 
 
-- Interactive Streamlist user interface:
+- Interactive Streamlit user interface:
     - Select copula model
     - Select marginal distributions
     - Set parameters such as correlation, degrees of freedom, sample size, and random seed
     - Generate copula samples
     - Transform copula samples into joint samples
-    - Display generated samples and summary statistics
+    - Display generated samples and summary statistics for both
+      copula samples \(U_1,U_2\) and transformed samples \(X_1,X_2\)
+    - Visualize empirical two-dimensional densities using KDE contour plots
     - Visualize samples and copula CDF functions interactively
 
 
 - Basic statistical functionality:
     - Empirical CDF evaluation implemented as a backend utility
-    - Summary statistics of generated samples in the Streamlit UI
+    - Summary statistics for copula samples \(U_1,U_2\) and transformed
+      samples\(X_1,X_2\) in the Streamlit UI
     - Sample correlation matrices for copula samples and transformed samples in the Streamlit UI
 
 
@@ -325,7 +330,8 @@ copula-risk-simulation/
 │   ├── surface.py
 │   ├── marginal.py
 │   ├── ecdf.py
-│   └── epdf.py
+│   ├── epdf.py
+│   └── kde.py
 │
 ├── images/                # Screenshots and README figures
 ├── tests/                 # Unit tests
